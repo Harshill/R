@@ -1,0 +1,150 @@
+---
+title: "Education data"
+output: html_notebook
+---
+```{r}
+library(stats)
+library(vegan) 
+library(car)
+library(MASS)
+library(moments)
+library(ggplot2)
+library(GGally)
+library(dplyr)
+```
+
+```{r}
+enrol = read.csv(file = "C:/Users/Harshil/Desktop/education_data.txt", sep = "\t")
+str(enrol)
+head(enrol)
+names(enrol)
+dim(enrol)
+
+
+
+```
+
+```{r}
+summary(enrol)
+
+
+qplot(data = enrol, x = YEAR, y = ROLL)
+qplot(data = enrol, x = UNEM, y = ROLL, geom = "boxplot", group = UNEM)
+qplot(data = enrol, x = YEAR, y = UNEM)
+
+qplot(data = enrol, x = HGRAD, y = YEAR)
+qplot(data = enrol, x = ROLL, y = INC)
+
+qplot(data = enrol, x = YEAR, y = INC)
+
+
+```
+
+```{r}
+library(GGally)
+ggpairs(enrol)
+```
+
+```{r}
+plot(enrol[,3], enrol[,2], main = "Fall undergraduate enrollment by unemployment rate", xlab = "Unemployment rate", ylab = "Undergraduate enrollment")
+
+plot(enrol[,4], enrol[,2], main = "Fall undergraduate enrollment by high school graduating 
+class size", xlab = "High school graduating class
+size", ylab = "Undergraduate 
+enrollment")
+
+```
+
+```{r}
+
+qqnorm(enrol$UNEM)
+qqline(enrol$UNEM)
+shapiro.test(enrol$UNEM)
+
+qqnorm(enrol$HGRAD)
+qqline(enrol$HGRAD)
+shapiro.test(enrol$HGRAD)
+
+qqnorm(enrol$ROLL)
+qqline(enrol$ROLL)
+shapiro.test(enrol$ROLL)
+
+qqnorm(enrol$INC)
+qqline(enrol$INC)
+shapiro.test(enrol$INC)
+
+```
+
+```{r}
+qqnorm(log10(enrol$INC))
+qqline(log10(enrol$INC))
+shapiro.test(log10(enrol$INC))  
+
+qqnorm(sqrt(enrol$INC))
+qqline(sqrt(enrol$INC))
+shapiro.test(sqrt(enrol$INC))
+
+skewness(enrol$UNEM)
+skewness(enrol$HGRAD)
+skewness(enrol$INC)
+```
+
+```{r}
+cor(enrol, method="pearson")
+cor.test(enrol$ROLL, enrol$INC, method = "pearson")
+cor.test(enrol$HGRAD, enrol$INC, method = "pearson")
+```
+
+```{r}
+Twopredictormodel=lm(ROLL ~ UNEM + HGRAD, data = enrol)
+summary(Twopredictormodel)
+AIC(Twopredictormodel)
+vif(Twopredictormodel)
+```
+
+```{r}
+Threepredictormodel=lm(ROLL ~ UNEM + HGRAD + INC, data = enrol)
+summary(Threepredictormodel)
+AIC(Threepredictormodel)
+vif(Threepredictormodel)
+
+```
+
+```{r}
+Lab Assignment #1
+1. What is the mean for each of your variables? (2 marks)
+
+colMeans(enrol)
+
+answers - 
+  Year: 15, Roll: 1270, Unem: 7.75, Hgrad: 16528, Inc: 2729
+
+2. Please plot Fall undergraduate enrollment (ROLL) by per capita income (INC) (2 marks)
+
+qplot(y = ROLL, x = INC, data = enrol) + labs(title = "Fall undergraduate enrolment by per capita income", x = "Per capita income", y = "Fall undergraduate enrolment")
+
+3. How do you interpret the significance of the Shapiro-Wilk test (i.e., what does P < 0.05 mean)? (1 mark)
+
+.	It means the values of that column are not normally distributed. 
+
+4. a) What is the correlation between HGRAD and INC? 
+.	0.82
+    b) Is the correlation significant? 
+.	Yes, p-value less than 0.05
+
+    c) Interpret the correlation and the significance both "biologically" and "statistically" (3 marks total)
+
+.	There is a strong positive relationship between highschool graduation and income
+
+5. a) Please interpret the 2 predictor and 3 predictor multiple regression models both "statistically" and "biologically" (8 marks)
+
+b) Which is the "best" fit model and why? (3 marks)
+
+c) Do the variance inflation factors suggest that multicollinearity is a problem for the 2 and 3 predictor models? (1 mark)
+
+```
+```{r}
+
+
+```
+
